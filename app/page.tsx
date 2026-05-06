@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 
 import { getHome } from "./_lib/api/fetch-generated";
 import { authClient } from "./_lib/auth-client";
+import { AppLogo } from "./_components/app-logo";
 import { BottomNav } from "./_components/bottom-nav";
 import { WorkoutDayCard } from "./_components/workout-day-card";
 
@@ -71,9 +72,7 @@ export default async function Home() {
           />
         </div>
 
-        <p className="relative font-anton text-[22px] text-primary-foreground uppercase leading-[1.15]">
-          Fit.ai
-        </p>
+        <AppLogo className="relative text-primary-foreground" />
 
         <div className="relative flex items-end justify-between">
           <div className="flex flex-col gap-[6px]">

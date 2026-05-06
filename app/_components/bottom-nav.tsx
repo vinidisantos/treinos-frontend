@@ -12,7 +12,7 @@ import { getHome } from "../_lib/api/fetch-generated";
 import { Button } from "@/components/ui/button";
 
 type BottomNavProps = {
-  activeTab?: "home" | "calendar";
+  activeTab?: "home" | "calendar" | "stats";
 };
 
 export async function BottomNav({ activeTab }: BottomNavProps) {
@@ -59,10 +59,13 @@ export async function BottomNav({ activeTab }: BottomNavProps) {
       <Button
         variant="ghost"
         size="icon"
-        className="text-muted-foreground size-[48px]"
+        className={`size-[48px] ${activeTab === "stats" ? "text-primary" : "text-muted-foreground"}`}
         aria-label="Estatísticas"
+        asChild
       >
-        <ChartNoAxesColumn className="size-[24px]" />
+        <Link href="/stats">
+          <ChartNoAxesColumn className="size-[24px]" />
+        </Link>
       </Button>
       <Button
         variant="ghost"

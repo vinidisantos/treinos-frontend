@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 
 import { getWorkoutPlan } from "@/app/_lib/api/fetch-generated";
 import { authClient } from "@/app/_lib/auth-client";
+import { AppLogo } from "@/app/_components/app-logo";
 import { BottomNav } from "@/app/_components/bottom-nav";
 
 const WEEK_DAY_LABELS: Record<string, string> = {
@@ -77,9 +78,7 @@ export default async function WorkoutPlanPage({ params }: PageProps) {
           />
         </div>
 
-        <p className="relative font-anton text-[22px] text-primary-foreground uppercase leading-[1.15]">
-          Fit.ai
-        </p>
+        <AppLogo className="relative text-primary-foreground" />
 
         <div className="relative flex items-end justify-between">
           <div className="flex flex-col gap-[12px] items-start">
