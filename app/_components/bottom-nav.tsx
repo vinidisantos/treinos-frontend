@@ -23,7 +23,7 @@ export async function BottomNav({ activeTab }: BottomNavProps) {
 
   const calendarHref =
     homeData?.todayWorkoutDay
-      ? `/workout-plans/${homeData.todayWorkoutDay.workoutPlanId}/days/${homeData.todayWorkoutDay.id}`
+      ? `/workout-plans/${homeData.todayWorkoutDay.workoutPlanId}`
       : "/";
 
   return (
