@@ -1,0 +1,205 @@
+---
+alwaysApply: false
+---
+
+# FIT.AI — Frontend Project Overview
+
+Aplicativo de academia com IA pessoal para criação e acompanhamento de treinos. O frontend é um Next.js App Router consumindo a `treinos-api` (Fastify + Prisma + PostgreSQL + better-auth).
+
+---
+
+## Stack Tecnológica
+
+| Camada | Tecnologia |
+|---|---|
+| Framework | Next.js 16 (App Router) |
+| Linguagem | TypeScript 5 |
+| Estilização | Tailwind CSS 4 + shadcn/ui (new-york) |
+| Componentes UI | shadcn/ui via `radix-ui` + `class-variance-authority` |
+| Autenticação | better-auth 1.4.18 (client: `better-auth/react`) |
+| Geração de API | Orval 8.1.0 (fetch client) |
+| Datas | dayjs |
+| Ícones | lucide-react |
+| Utilitários | clsx + tailwind-merge (`cn()`) |
+| Package Manager | pnpm |
+
+---
+
+## Estrutura de Pastas
+
+```
+treinos-frontend/
+├── app/
+│   ├── _lib/
+│   │   ├── auth-client.ts          # instância do better-auth (client-side)
+│   │   ├── fetch.ts                # customFetch usado pelo Orval (server-side, injeta cookies)
+│   │   └── api/
+│   │       └── fetch-generated/
+│   │           └── index.ts        # funções e tipos gerados pelo Orval (NÃO EDITAR)
+│   ├── auth/
+│   │   └── page.tsx                # tela de login (Google OAuth)
+│   ├── globals.css                 # variáveis de tema (tokens de cor, radius etc.)
+│   ├── layout.tsx                  # RootLayout com fontes Geist
+│   └── page.tsx                    # home (server component, protegida)
+├── components/
+│   └── ui/                         # componentes shadcn/ui instalados
+│       ├── avatar.tsx
+│       ├── badge.tsx
+│       ├── button.tsx
+│       ├── card.tsx
+│       └── input.tsx
+├── lib/
+│   └── utils.ts                    # função cn()
+├── .cursor/
+│   └── rules/                      # regras do Cursor (sempre aplicadas)
+│       ├── general.mdc
+│       ├── api.mdc
+│       ├── react.mdc
+│       └── typescript.mdc
+├── tasks/                          # tarefas do bootcamp (01.mdc … 07.mdc)
+├── orval.config.ts                 # configuração do Orval
+├── components.json                 # configuração do shadcn/ui
+└── .env                            # NEXT_PUBLIC_API_URL=http://localhost:8080
+```
+
+---
+
+## Camada de API
+
+Toda comunicação com o backend usa **Orval** para gerar funções e tipos a partir do OpenAPI (`/swagger.json`) da `treinos-api`.
+
+### Arquivo gerado
+`app/_lib/api/fetch-generated/index.ts` — **nunca editar manualmente**. Para regenerar:
+```bash
+pnpm orval
+```
+
+### Funções disponíveis
+
+| Função | Método | Rota | Descrição |
+|---|---|---|---|
+| `getHome(date)` | GET | `/home/:date` | Dados da home (treino de hoje, streak, consistência) |
+| `createWorkoutPlan(body)` | POST | `/workout-plans/` | Cria plano de treino |
+| `listWorkoutPlans(params?)` | GET | `/workout-plans/` | Lista planos (filtro `active`) |
+| `getWorkoutPlan(id)` | GET | `/workout-plans/:id` | Detalhe de um plano |
+| `getWorkoutDay(planId, dayId)` | GET | `/workout-plans/:id/days/:id` | Detalhe de um dia de treino |
+| `startWorkoutSession(planId, dayId)` | POST | `/workout-plans/:id/days/:id/sessions` | Inicia sessão de treino |
+| `updateWorkoutSession(planId, dayId, sessionId, body)` | PATCH | `/workout-plans/:id/days/:id/sessions/:id` | Conclui sessão (envia `completedAt`) |
+| `getStats(params)` | GET | `/stats/` | Estatísticas (streak, consistência, taxa de conclusão) |
+| `getUserTrainData()` | GET | `/me` | Dados físicos do usuário (peso, altura, idade, etc.) |
+| `postAi(body)` | POST | `/ai/` | Chat com o personal trainer IA (streaming) |
+
+### Como usar no servidor (Server Components)
+```ts
+import { getHome } from "@/app/_lib/api/fetch-generated";
+
+const data = await getHome(dayjs().format("YYYY-MM-DD"));
+if (data.status !== 200) { /* tratar erro */ }
+const homeData = data.data;
+```
+
+O `customFetch` (`app/_lib/fetch.ts`) injeta automaticamente os cookies de sessão via `next/headers`, portanto **não é necessário passar token manualmente** em Server Components.
+
+---
+
+## Autenticação
+
+- Provider: **Google OAuth** via better-auth
+- Backend: `treinos-api` em `http://localhost:8080`
+- Instância client: `app/_lib/auth-client.ts`
+
+### Verificação de sessão
+
+**Server Component (recomendado para páginas protegidas):**
+```ts
+import { authClient } from "@/app/_lib/auth-client";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+
+const session = await authClient.getSession({ fetchOptions: { headers: await headers() } });
+if (!session.data?.user) redirect("/auth");
+```
+
+**Client Component:**
+```ts
+const { data: session, isPending } = authClient.useSession();
+```
+
+### Regras de autenticação
+- Páginas protegidas → redirecionam para `/auth` se não logado
+- Página `/auth` → redireciona para `/` se já logado
+- **Nunca usar middleware** para verificação de auth
+
+---
+
+## Rotas Existentes
+
+| Rota | Arquivo | Tipo | Status |
+|---|---|---|---|
+| `/` | `app/page.tsx` | Server Component | Implementada (placeholder) |
+| `/auth` | `app/auth/page.tsx` | Client Component | Implementada |
+
+### Rotas Planejadas (tasks 02–07)
+
+| Rota | Task | Descrição |
+|---|---|---|
+| `/` (home completa) | `tasks/02.mdc` | Dashboard: treino de hoje, streak, consistência semanal |
+| `/workout-plans/[id]` | `tasks/04.mdc` | Detalhe de um plano de treino |
+| `/workout-plans/[id]/days/[id]` | `tasks/03.mdc` | Detalhe de dia + iniciar/concluir sessão |
+| `/stats` | `tasks/05.mdc` | Estatísticas e heatmap de consistência |
+| `/onboarding` | `tasks/07.mdc` | Onboarding com chat IA para criar plano |
+| `?chat_open=true` | `tasks/06.mdc` | Chatbot (overlay) — Vercel AI SDK + nuqs |
+
+---
+
+## Componentes UI Instalados (shadcn/ui)
+
+| Componente | Arquivo | Uso |
+|---|---|---|
+| `Button` | `components/ui/button.tsx` | Variantes: default, outline, ghost, destructive, secondary, link |
+| `Card` | `components/ui/card.tsx` | CardHeader, CardContent, CardFooter, CardTitle, CardAction |
+| `Badge` | `components/ui/badge.tsx` | Variantes: default, secondary, destructive, outline, ghost, link |
+| `Avatar` | `components/ui/avatar.tsx` | AvatarImage, AvatarFallback, AvatarBadge, AvatarGroup |
+| `Input` | `components/ui/input.tsx` | Input nativo estilizado |
+
+Para instalar novos componentes: `pnpm dlx shadcn@latest add <componente>`
+
+---
+
+## Tokens de Cor (globals.css)
+
+Sempre usar variáveis de tema, **nunca cores hard-coded do Tailwind**.
+
+| Token | Uso |
+|---|---|
+| `bg-background` / `text-foreground` | Fundo e texto principais |
+| `bg-primary` / `text-primary-foreground` | Ações primárias |
+| `bg-secondary` / `text-secondary-foreground` | Ações secundárias |
+| `bg-muted` / `text-muted-foreground` | Elementos desabilitados/sutis |
+| `bg-card` / `text-card-foreground` | Cards |
+| `border-border` | Bordas |
+| `bg-destructive` | Estados de erro/destrutivo |
+| `--radius` | `0.5rem` (base para `rounded-*`) |
+
+---
+
+## Variáveis de Ambiente
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8080   # URL base da treinos-api
+```
+
+---
+
+## Como Rodar Localmente
+
+```bash
+# 1. Subir banco (PostgreSQL via Docker)
+cd ../treinos-api && docker compose up -d
+
+# 2. Subir a API
+cd ../treinos-api && pnpm dev
+
+# 3. Subir o frontend
+pnpm dev   # http://localhost:3000
+```

@@ -16,6 +16,25 @@ Você é um engenheiro de software sênior especializado em desenvolvimento web 
 - BetterAuth para autenticação
 - Orval para geração de funções de API
 
+## Organização de Componentes
+
+- **NUNCA** crie mais de um componente por arquivo. Cada arquivo deve exportar um único componente.
+- O nome do arquivo deve corresponder ao nome do componente (ex: `workout-day-card.tsx` exporta `WorkoutDayCard`).
+
+## Estilização
+
+- **NUNCA** use cores hard-coded (ex: `#2b54ff`, `rgba(...)`, `text-zinc-900`). Use **sempre** as variáveis CSS definidas em `globals.css` via Tailwind (ex: `bg-primary`, `text-foreground`, `bg-card`, `text-muted-foreground`, `border-border`).
+- Mapeie as cores do Figma para o token semântico mais próximo do design system (ex: azul primário → `primary`, fundo de card → `card`, texto secundário → `muted-foreground`).
+- Para valores de cor sem token equivalente, crie uma variável CSS em `globals.css` antes de usá-la.
+
+```tsx
+// ❌ RUIM
+<div className="bg-[#2b54ff] text-white border border-[#f1f1f1]">
+
+// ✅ BOM
+<div className="bg-primary text-primary-foreground border border-border">
+```
+
 ## MCPs
 
 - **SEMPRE** use o MCP do Context7 para fazer buscas em documentações e sites

@@ -1,10 +1,10 @@
 ## Tarefa
 
-Crie a tela que está em https://www.figma.com/design/icjlmwVThvfpiYYXFld8gG/FIT.AI?node-id=75-507&m=dev. SEJA 100% FIEL AO FIGMA.
+Crie a tela que está em https://www.figma.com/design/n4hCQCOMCVAefQ3bgvbLED/FIT.AI?node-id=3606-2&m=dev. SEJA 100% FIEL AO FIGMA.
 
 ## Requisitos Técnicos
 
-- Crie a barra de navegação (https://www.figma.com/design/icjlmwVThvfpiYYXFld8gG/FIT.AI?node-id=75-572&m=dev) mas os demais botões (com exceção do da home) não farão nada.
+- Crie a barra de navegação (https://www.figma.com/design/n4hCQCOMCVAefQ3bgvbLED/FIT.AI?node-id=3606-2&m=dev) mas os demais botões (com exceção do da home) não farão nada.
 - Crie a tela em @app/page.tsx.
 - Essa tela deve ser um server component.
 - Recupere os dados por meio da função `getHomeData` que está em @app/\_lib/api/fetch-generated/index.ts.
