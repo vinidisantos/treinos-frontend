@@ -1,0 +1,37 @@
+---
+description: Usar componentes shadcn/ui para elementos de interface
+globs: treinos-frontend/**/*.tsx
+alwaysApply: false
+---
+
+# Componentes UI — shadcn/ui
+
+Sempre use o componente `Button` do shadcn ao invés de `<button>` nativo.
+
+```tsx
+// ❌ ERRADO
+<button className="bg-primary px-4 py-2 rounded-md text-white">
+  Salvar
+</button>
+
+// ✅ CORRETO
+import { Button } from "@/components/ui/button";
+
+<Button>Salvar</Button>
+<Button variant="outline">Cancelar</Button>
+<Button variant="ghost" size="icon"><ChevronLeft /></Button>
+```
+
+## Variants disponíveis
+- `default` — botão primário (bg-primary)
+- `outline` — borda com fundo transparente
+- `ghost` — sem borda, sem fundo
+- `secondary` — fundo secundário
+- `destructive` — vermelho para ações destrutivas
+- `link` — parece um link
+
+## Sizes disponíveis
+- `default`, `sm`, `lg`, `xs`
+- `icon`, `icon-sm`, `icon-lg`, `icon-xs` — para botões com apenas ícone
+
+Use `className` para sobrescrever estilos quando o design exigir (ex: `rounded-full`, tamanhos customizados).

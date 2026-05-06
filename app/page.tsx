@@ -147,7 +147,10 @@ export default async function Home() {
         </div>
 
         {homeData?.todayWorkoutDay ? (
-          <Link href="#" className="w-full">
+          <Link
+            href={`/workout-plans/${homeData.todayWorkoutDay.workoutPlanId}/days/${homeData.todayWorkoutDay.id}`}
+            className="w-full"
+          >
             <WorkoutDayCard workoutDay={homeData.todayWorkoutDay} />
           </Link>
         ) : (
@@ -159,7 +162,7 @@ export default async function Home() {
         )}
       </div>
 
-      <BottomNav />
+      <BottomNav activeTab="home" />
     </div>
   );
 }
