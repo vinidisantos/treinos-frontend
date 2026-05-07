@@ -48,7 +48,7 @@ export default async function Home() {
   const weekStart = today.startOf("week"); // Sunday
   const weekDays = WEEK_DAYS_ORDER.map(({ label, offset }) => {
     const date = weekStart.add(offset, "day").format("YYYY-MM-DD");
-    const consistency = homeData?.consistencyByDay[date];
+    const consistency = homeData?.consistencyByDay?.[date];
     return { label, date, consistency };
   });
 
