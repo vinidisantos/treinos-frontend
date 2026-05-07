@@ -1,7 +1,6 @@
 "use client";
 
 import { authClient } from "@/app/_lib/auth-client";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const imgLogin =
@@ -13,15 +12,14 @@ const imgFitAi =
 
 export default function AuthPage() {
   const { data: session, isPending } = authClient.useSession();
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!isPending && session) {
-      router.replace("/");
+    if (!isPending && session?.user) {
+      window.location.replace("/");
     }
-  }, [session, isPending, router]);
+  }, [session, isPending]);
 
   const handleGoogleLogin = async () => {
     setIsLoading(true);

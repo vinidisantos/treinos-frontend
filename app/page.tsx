@@ -1,6 +1,5 @@
 import dayjs from "dayjs";
 import { Flame } from "lucide-react";
-import { headers } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -9,7 +8,7 @@ import { AppLogo } from "./_components/app-logo";
 import { BottomNav } from "./_components/bottom-nav";
 import { WorkoutDayCard } from "./_components/workout-day-card";
 import { getHome } from "./_lib/api/fetch-generated";
-import { authClient } from "./_lib/auth-client";
+import { getServerSession } from "./_lib/get-server-session";
 import { needsOnboarding } from "./_lib/check-onboarding";
 
 const WEEK_DAYS_ORDER = [
@@ -23,11 +22,7 @@ const WEEK_DAYS_ORDER = [
 ];
 
 export default async function Home() {
-  const session = await authClient.getSession({
-    fetchOptions: {
-      headers: await headers(),
-    },
-  });
+  const session = await getServerSession();
 
   if (!session.data?.user) {
     redirect("/auth");

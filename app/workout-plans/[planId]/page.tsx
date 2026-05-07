@@ -1,11 +1,10 @@
 import { Calendar, Dumbbell, Goal, Timer, Zap } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { getWorkoutPlan } from "@/app/_lib/api/fetch-generated";
-import { authClient } from "@/app/_lib/auth-client";
+import { getServerSession } from "@/app/_lib/get-server-session";
 import { needsOnboarding } from "@/app/_lib/check-onboarding";
 import { AppLogo } from "@/app/_components/app-logo";
 import { BottomNav } from "@/app/_components/bottom-nav";
@@ -37,9 +36,7 @@ type PageProps = {
 export default async function WorkoutPlanPage({ params }: PageProps) {
   const { planId } = await params;
 
-  const session = await authClient.getSession({
-    fetchOptions: { headers: await headers() },
-  });
+  const session = await getServerSession();
 
   if (!session.data?.user) {
     redirect("/auth");

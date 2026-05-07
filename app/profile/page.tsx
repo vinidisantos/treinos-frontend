@@ -5,11 +5,10 @@ import {
   WeightTilde,
 } from "lucide-react";
 import Image from "next/image";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { getUserTrainData } from "@/app/_lib/api/fetch-generated";
-import { authClient } from "@/app/_lib/auth-client";
+import { getServerSession } from "@/app/_lib/get-server-session";
 import { needsOnboarding } from "@/app/_lib/check-onboarding";
 import { AppLogo } from "@/app/_components/app-logo";
 import { BottomNav } from "@/app/_components/bottom-nav";
@@ -21,9 +20,7 @@ function formatWeight(weightInGrams: number): string {
 }
 
 export default async function ProfilePage() {
-  const session = await authClient.getSession({
-    fetchOptions: { headers: await headers() },
-  });
+  const session = await getServerSession();
 
   if (!session.data?.user) {
     redirect("/auth");

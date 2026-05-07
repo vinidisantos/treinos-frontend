@@ -1,14 +1,11 @@
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-import { authClient } from "@/app/_lib/auth-client";
+import { getServerSession } from "@/app/_lib/get-server-session";
 import { needsOnboarding } from "@/app/_lib/check-onboarding";
 import { OnboardingChat } from "./_components/onboarding-chat";
 
 export default async function OnboardingPage() {
-  const session = await authClient.getSession({
-    fetchOptions: { headers: await headers() },
-  });
+  const session = await getServerSession();
 
   if (!session.data?.user) {
     redirect("/auth");
