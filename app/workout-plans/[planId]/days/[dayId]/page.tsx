@@ -1,4 +1,4 @@
-import { Calendar, CircleHelp, Dumbbell, Timer, Zap } from "lucide-react";
+import { Calendar, Dumbbell, Timer, Zap } from "lucide-react";
 import { redirect } from "next/navigation";
 
 import { getWorkoutDay } from "@/app/_lib/api/fetch-generated";
@@ -6,6 +6,7 @@ import { BottomNav } from "@/app/_components/bottom-nav";
 import { Button } from "@/components/ui/button";
 import { BackButton } from "./_components/back-button";
 import { CompleteWorkoutButton } from "./_components/complete-workout-button";
+import { ExerciseHelpButton } from "./_components/exercise-help-button";
 import { StartWorkoutButton } from "./_components/start-workout-button";
 
 const WEEK_DAY_LABELS: Record<string, string> = {
@@ -147,14 +148,7 @@ export default async function WorkoutDayPage({ params }: PageProps) {
                   <p className="font-semibold text-[16px] text-foreground leading-[1.4]">
                     {exercise.name}
                   </p>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    aria-label="Informações do exercício"
-                    className="size-[20px] text-muted-foreground shrink-0"
-                  >
-                    <CircleHelp className="size-[20px]" />
-                  </Button>
+                  <ExerciseHelpButton exerciseName={exercise.name} />
                 </div>
 
                 <div className="flex gap-[6px] items-center flex-wrap">

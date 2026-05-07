@@ -17,4 +17,4 @@ Crie um chatbot que chame a rota `/ai` da API (não use Orval).
 - Abra o chatbot ao clicar no botão "?" do @exercise-card.tsx e a mensagem inicial (passada via URL) deve ser "Como executar o exercício X corretamente?"
 - Use a biblioteca "streamdown" para formatar as mensagens do chatbot.
 - Ao abrir o chatbot e não haver nenhuma mensagem, exiba as seguintes mensagens sugeridas: "Monte meu plano de treino".
-- Seja 100% FIEL AO FIGMA. Veja https://www.figma.com/design/icjlmwVThvfpiYYXFld8gG/FIT.AI?node-id=131-493&m=dev
+- Seja 100% FIEL AO FIGMA. Veja https://www.figma.com/design/n4hCQCOMCVAefQ3bgvbLED/FIT.AI?node-id=3606-1090&m=dev

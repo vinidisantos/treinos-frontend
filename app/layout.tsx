@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Anton, Geist, Geist_Mono } from "next/font/google";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import "./globals.css";
+
+import { ChatBot } from "./_components/chat-bot";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,7 +36,12 @@ export default function RootLayout({
       lang="pt-BR"
       className={`${geistSans.variable} ${geistMono.variable} ${anton.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+          <NuqsAdapter>
+            {children}
+            <ChatBot />
+          </NuqsAdapter>
+        </body>
     </html>
   );
 }

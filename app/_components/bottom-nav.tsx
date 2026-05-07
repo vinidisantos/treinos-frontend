@@ -2,7 +2,6 @@ import {
   Calendar,
   ChartNoAxesColumn,
   House,
-  Sparkles,
   UserRound,
 } from "lucide-react";
 import Link from "next/link";
@@ -10,9 +9,10 @@ import dayjs from "dayjs";
 
 import { getHome } from "../_lib/api/fetch-generated";
 import { Button } from "@/components/ui/button";
+import { OpenChatButton } from "./open-chat-button";
 
 type BottomNavProps = {
-  activeTab?: "home" | "calendar" | "stats";
+  activeTab?: "home" | "calendar" | "stats" | "profile";
 };
 
 export async function BottomNav({ activeTab }: BottomNavProps) {
@@ -50,12 +50,7 @@ export async function BottomNav({ activeTab }: BottomNavProps) {
           <Calendar className="size-[24px]" />
         </Link>
       </Button>
-      <Button
-        className="bg-primary p-[16px] rounded-full text-primary-foreground size-auto"
-        aria-label="IA"
-      >
-        <Sparkles className="size-[24px]" />
-      </Button>
+      <OpenChatButton />
       <Button
         variant="ghost"
         size="icon"
@@ -70,10 +65,13 @@ export async function BottomNav({ activeTab }: BottomNavProps) {
       <Button
         variant="ghost"
         size="icon"
-        className="text-muted-foreground size-[48px]"
+        className={`size-[48px] ${activeTab === "profile" ? "text-primary" : "text-muted-foreground"}`}
         aria-label="Perfil"
+        asChild
       >
-        <UserRound className="size-[24px]" />
+        <Link href="/profile">
+          <UserRound className="size-[24px]" />
+        </Link>
       </Button>
     </div>
   );
