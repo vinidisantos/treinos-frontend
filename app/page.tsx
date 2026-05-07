@@ -29,7 +29,7 @@ export default async function Home() {
     },
   });
 
-  if (!session.data?.user) redirect("/auth");
+  if (!session.data?.user) redirect("/");
 
   if (await needsOnboarding()) {
     redirect("/onboarding");
