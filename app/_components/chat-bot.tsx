@@ -1,12 +1,20 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { DefaultChatTransport } from "ai";
 import { ArrowUp, Sparkles, X } from "lucide-react";
 import { parseAsBoolean, parseAsString, useQueryState } from "nuqs";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { Streamdown } from "streamdown";
 import "streamdown/styles.css";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+import { z } from "zod";
+
+const chatSchema = z.object({
+  message: z.string().trim().min(1),
+});
 
 export function ChatBot() {
   const [chatOpen, setChatOpen] = useQueryState(
@@ -25,7 +33,13 @@ export function ChatBot() {
     }),
   });
 
-  const [input, setInput] = useState("");
+  const form = useForm<z.infer<typeof chatSchema>>({
+    resolver: zodResolver(chatSchema),
+    defaultValues: { message: "" },
+  });
+
+  const messageValue = useWatch({ control: form.control, name: "message" });
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const autoSentRef = useRef("");
 
@@ -53,18 +67,10 @@ export function ChatBot() {
     setInitialMessage(null);
   }
 
-  function handleSend() {
-    const text = input.trim();
-    if (!text || status === "streaming" || status === "submitted") return;
-    sendMessage({ text });
-    setInput("");
-  }
-
-  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
+  function onSubmit(values: z.infer<typeof chatSchema>) {
+    if (status === "streaming" || status === "submitted") return;
+    sendMessage({ text: values.message });
+    form.reset();
   }
 
   if (!chatOpen) return null;
@@ -160,26 +166,39 @@ export function ChatBot() {
           )}
 
           {/* Input */}
-          <div className="border-t border-border flex items-center gap-[8px] p-[20px]">
-            <div className="bg-muted flex flex-1 items-center overflow-hidden px-[16px] py-[12px] rounded-[99px]">
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Digite sua mensagem"
-                disabled={isLoading}
-                className="bg-transparent flex-1 text-[14px] text-foreground placeholder:text-muted-foreground outline-none min-w-0"
-              />
-            </div>
-            <button
-              onClick={handleSend}
-              disabled={!input.trim() || isLoading}
-              className="bg-primary flex items-center justify-center p-[10px] rounded-[99px] size-[42px] shrink-0 disabled:opacity-50"
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="border-t border-border flex items-center gap-[8px] p-[20px]"
             >
-              <ArrowUp className="size-[20px] text-primary-foreground" />
-            </button>
-          </div>
+              <FormField
+                control={form.control}
+                name="message"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormControl>
+                      <div className="bg-muted flex items-center overflow-hidden px-[16px] py-[12px] rounded-[99px]">
+                        <input
+                          {...field}
+                          type="text"
+                          placeholder="Digite sua mensagem"
+                          disabled={isLoading}
+                          className="bg-transparent flex-1 text-[14px] text-foreground placeholder:text-muted-foreground outline-none min-w-0"
+                        />
+                      </div>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <button
+                type="submit"
+                disabled={!messageValue?.trim() || isLoading}
+                className="bg-primary flex items-center justify-center p-[10px] rounded-[99px] size-[42px] shrink-0 disabled:opacity-50"
+              >
+                <ArrowUp className="size-[20px] text-primary-foreground" />
+              </button>
+            </form>
+          </Form>
         </div>
       </div>
     </>
