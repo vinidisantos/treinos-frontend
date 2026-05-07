@@ -1,7 +1,8 @@
 "use client";
 
 import { authClient } from "@/app/_lib/auth-client";
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useState } from "react";
 
 const imgLogin =
   "https://www.figma.com/api/mcp/asset/bf448a4f-de9b-4b0c-9549-236f88ae5f46";
@@ -14,12 +15,6 @@ export default function AuthPage() {
   const { data: session, isPending } = authClient.useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!isPending && session?.user) {
-      window.location.replace("/");
-    }
-  }, [session, isPending]);
 
   const handleGoogleLogin = async () => {
     setIsLoading(true);
@@ -75,22 +70,31 @@ export default function AuthPage() {
             O app que vai transformar a forma como você treina.
           </p>
 
-          <button
-            onClick={handleGoogleLogin}
-            disabled={isLoading}
-            className="bg-white flex gap-2 h-[38px] items-center justify-center px-6 rounded-full cursor-pointer hover:bg-gray-50 transition-colors shrink-0 disabled:opacity-70 disabled:cursor-not-allowed"
-          >
-            <div className="relative size-4 overflow-hidden shrink-0">
-              <img
-                alt=""
-                className="absolute inset-0 size-full object-contain"
-                src={imgGroup}
-              />
-            </div>
-            <span className="font-semibold text-[14px] text-black whitespace-nowrap">
-              {isLoading ? "Entrando..." : "Fazer login com Google"}
-            </span>
-          </button>
+          {session?.user && !isPending ? (
+            <p className="text-[14px] text-white/90 text-center leading-[1.4]">
+              Você já está logado.{" "}
+              <Link href="/" className="font-semibold underline">
+                Ir para o app
+              </Link>
+            </p>
+          ) : (
+            <button
+              onClick={handleGoogleLogin}
+              disabled={isLoading}
+              className="bg-white flex gap-2 h-[38px] items-center justify-center px-6 rounded-full cursor-pointer hover:bg-gray-50 transition-colors shrink-0 disabled:opacity-70 disabled:cursor-not-allowed"
+            >
+              <div className="relative size-4 overflow-hidden shrink-0">
+                <img
+                  alt=""
+                  className="absolute inset-0 size-full object-contain"
+                  src={imgGroup}
+                />
+              </div>
+              <span className="font-semibold text-[14px] text-black whitespace-nowrap">
+                {isLoading ? "Entrando..." : "Fazer login com Google"}
+              </span>
+            </button>
+          )}
 
           {error && (
             <p className="text-[12px] text-red-300 text-center">{error}</p>
