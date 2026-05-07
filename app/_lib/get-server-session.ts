@@ -1,19 +1,21 @@
-import { headers } from "next/headers";
+import { cookies } from "next/headers";
 
 import { authClient } from "./auth-client";
 
 /**
- * Lê a sessão no Server Component. Repassa o header `Cookie` explicitamente —
- * repassar o objeto `headers()` inteiro para o fetch nem sempre propaga cookies
- * corretamente para a API (Better Auth em outro host), o que pode causar loop
- * `/` ↔ `/auth` após o login com OAuth.
+ * Lê a sessão no Server Component e repassa cookies para a API (Better Auth).
+ * Usa `cookies()` do Next para montar o header `Cookie` (equivalente ao do navegador).
  */
 export async function getServerSession() {
-  const h = await headers();
-  const cookie = h.get("cookie");
+  const store = await cookies();
+  const cookieHeader = store
+    .getAll()
+    .map((c) => `${c.name}=${c.value}`)
+    .join("; ");
+
   return authClient.getSession({
     fetchOptions: {
-      headers: cookie ? { cookie } : {},
+      headers: cookieHeader ? { cookie: cookieHeader } : {},
     },
   });
 }

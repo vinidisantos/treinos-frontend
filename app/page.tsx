@@ -11,6 +11,8 @@ import { getHome } from "./_lib/api/fetch-generated";
 import { getServerSession } from "./_lib/get-server-session";
 import { needsOnboarding } from "./_lib/check-onboarding";
 
+export const dynamic = "force-dynamic";
+
 const WEEK_DAYS_ORDER = [
   { label: "S", offset: 1 }, // Segunda (Monday)
   { label: "T", offset: 2 }, // Terça (Tuesday)

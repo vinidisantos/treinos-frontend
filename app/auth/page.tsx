@@ -1,7 +1,6 @@
 "use client";
 
 import { authClient } from "@/app/_lib/auth-client";
-import Link from "next/link";
 import { useState } from "react";
 
 const imgLogin =
@@ -15,6 +14,8 @@ export default function AuthPage() {
   const { data: session, isPending } = authClient.useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const homeUrl = `${(process.env.NEXT_PUBLIC_BASE_URL ?? "").replace(/\/$/, "")}/`;
 
   const handleGoogleLogin = async () => {
     setIsLoading(true);
@@ -73,28 +74,29 @@ export default function AuthPage() {
           {session?.user && !isPending ? (
             <p className="text-[14px] text-white/90 text-center leading-[1.4]">
               Você já está logado.{" "}
-              <Link href="/" className="font-semibold underline">
+              {/* Navegação completa (não client-side) para o cookie de sessão ir na requisição à `/` */}
+              <a href={homeUrl} className="font-semibold underline">
                 Ir para o app
-              </Link>
+              </a>
             </p>
-          ) : (
-            <button
-              onClick={handleGoogleLogin}
-              disabled={isLoading}
-              className="bg-white flex gap-2 h-[38px] items-center justify-center px-6 rounded-full cursor-pointer hover:bg-gray-50 transition-colors shrink-0 disabled:opacity-70 disabled:cursor-not-allowed"
-            >
-              <div className="relative size-4 overflow-hidden shrink-0">
-                <img
-                  alt=""
-                  className="absolute inset-0 size-full object-contain"
-                  src={imgGroup}
-                />
-              </div>
-              <span className="font-semibold text-[14px] text-black whitespace-nowrap">
-                {isLoading ? "Entrando..." : "Fazer login com Google"}
-              </span>
-            </button>
-          )}
+          ) : null}
+
+          <button
+            onClick={handleGoogleLogin}
+            disabled={isLoading}
+            className="bg-white flex gap-2 h-[38px] items-center justify-center px-6 rounded-full cursor-pointer hover:bg-gray-50 transition-colors shrink-0 disabled:opacity-70 disabled:cursor-not-allowed"
+          >
+            <div className="relative size-4 overflow-hidden shrink-0">
+              <img
+                alt=""
+                className="absolute inset-0 size-full object-contain"
+                src={imgGroup}
+              />
+            </div>
+            <span className="font-semibold text-[14px] text-black whitespace-nowrap">
+              {isLoading ? "Entrando..." : "Fazer login com Google"}
+            </span>
+          </button>
 
           {error && (
             <p className="text-[12px] text-red-300 text-center">{error}</p>
