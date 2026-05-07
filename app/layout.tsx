@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Anton, Geist, Geist_Mono } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { Suspense } from "react";
 import "./globals.css";
 
 import { ChatBot } from "./_components/chat-bot";
@@ -39,7 +40,9 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
           <NuqsAdapter>
             {children}
-            <ChatBot />
+            <Suspense fallback={null}>
+              <ChatBot />
+            </Suspense>
           </NuqsAdapter>
         </body>
     </html>

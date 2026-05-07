@@ -1,16 +1,16 @@
 import dayjs from "dayjs";
 import { Flame } from "lucide-react";
+import { headers } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-import { getHome } from "./_lib/api/fetch-generated";
-import { authClient } from "./_lib/auth-client";
-import { needsOnboarding } from "./_lib/check-onboarding";
 import { AppLogo } from "./_components/app-logo";
 import { BottomNav } from "./_components/bottom-nav";
 import { WorkoutDayCard } from "./_components/workout-day-card";
+import { getHome } from "./_lib/api/fetch-generated";
+import { authClient } from "./_lib/auth-client";
+import { needsOnboarding } from "./_lib/check-onboarding";
 
 const WEEK_DAYS_ORDER = [
   { label: "S", offset: 1 }, // Segunda (Monday)
@@ -29,9 +29,7 @@ export default async function Home() {
     },
   });
 
-  if (!session.data?.user) {
-    redirect("/auth");
-  }
+  if (!session.data?.user) redirect("/auth");
 
   if (await needsOnboarding()) {
     redirect("/onboarding");
@@ -44,7 +42,8 @@ export default async function Home() {
     redirect("/auth");
   }
 
-  const homeData = homeDataResponse.status === 200 ? homeDataResponse.data : null;
+  const homeData =
+    homeDataResponse.status === 200 ? homeDataResponse.data : null;
 
   const weekStart = today.startOf("week"); // Sunday
   const weekDays = WEEK_DAYS_ORDER.map(({ label, offset }) => {
@@ -110,11 +109,13 @@ export default async function Home() {
         <div className="flex gap-[12px] items-center w-full">
           <div className="border border-border flex items-center justify-between p-[20px] rounded-[12px] flex-1">
             {weekDays.map(({ label, date, consistency }) => {
-              let squareClass = "border border-border relative rounded-[6px] size-[20px]";
+              let squareClass =
+                "border border-border relative rounded-[6px] size-[20px]";
               if (consistency?.workoutDayCompleted) {
                 squareClass = "bg-primary relative rounded-[6px] size-[20px]";
               } else if (consistency?.workoutDayStarted) {
-                squareClass = "bg-primary/20 relative rounded-[6px] size-[20px]";
+                squareClass =
+                  "bg-primary/20 relative rounded-[6px] size-[20px]";
               }
               return (
                 <div
@@ -160,7 +161,9 @@ export default async function Home() {
         ) : (
           <div className="border border-border rounded-[12px] p-[20px] flex items-center justify-center h-[200px]">
             <p className="text-muted-foreground text-[14px]">
-              {homeData ? "Nenhum treino para hoje" : "Nenhum plano de treino ativo"}
+              {homeData
+                ? "Nenhum treino para hoje"
+                : "Nenhum plano de treino ativo"}
             </p>
           </div>
         )}
