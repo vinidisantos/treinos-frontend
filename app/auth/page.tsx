@@ -27,15 +27,30 @@ export default function AuthPage() {
     setIsLoading(true);
     setError(null);
 
-    const { error } = await authClient.signIn.social({
+    const result = await authClient.signIn.social({
       provider: "google",
       callbackURL: `${process.env.NEXT_PUBLIC_BASE_URL}/`,
+      /** Evita redirect pelo cliente dentro de frame / estado estranho (chrome-error://…) */
+      disableRedirect: true,
     });
 
-    if (error) {
-      setError(error.message ?? "Erro ao fazer login. Tente novamente.");
+    if (result.error) {
+      setError(
+        result.error.message ?? "Erro ao fazer login. Tente novamente.",
+      );
       setIsLoading(false);
+      return;
     }
+
+    const url = result.data?.url;
+    if (typeof url === "string" && url.length > 0) {
+      const target = window.top ?? window;
+      target.location.assign(url);
+      return;
+    }
+
+    setError("Resposta inesperada do servidor. Tente novamente.");
+    setIsLoading(false);
   };
 
   return (
