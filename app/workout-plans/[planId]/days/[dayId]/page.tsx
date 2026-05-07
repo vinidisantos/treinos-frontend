@@ -2,6 +2,7 @@ import { Calendar, Dumbbell, Timer, Zap } from "lucide-react";
 import { redirect } from "next/navigation";
 
 import { getWorkoutDay } from "@/app/_lib/api/fetch-generated";
+import { needsOnboarding } from "@/app/_lib/check-onboarding";
 import { BottomNav } from "@/app/_components/bottom-nav";
 import { Button } from "@/components/ui/button";
 import { BackButton } from "./_components/back-button";
@@ -35,6 +36,10 @@ type PageProps = {
 
 export default async function WorkoutDayPage({ params }: PageProps) {
   const { planId: workoutPlanId, dayId: workoutDayId } = await params;
+
+  if (await needsOnboarding()) {
+    redirect("/onboarding");
+  }
 
   const response = await getWorkoutDay(workoutPlanId, workoutDayId);
 

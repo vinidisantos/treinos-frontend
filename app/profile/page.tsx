@@ -10,6 +10,7 @@ import { redirect } from "next/navigation";
 
 import { getUserTrainData } from "@/app/_lib/api/fetch-generated";
 import { authClient } from "@/app/_lib/auth-client";
+import { needsOnboarding } from "@/app/_lib/check-onboarding";
 import { AppLogo } from "@/app/_components/app-logo";
 import { BottomNav } from "@/app/_components/bottom-nav";
 import { SignOutButton } from "./_components/sign-out-button";
@@ -26,6 +27,10 @@ export default async function ProfilePage() {
 
   if (!session.data?.user) {
     redirect("/auth");
+  }
+
+  if (await needsOnboarding()) {
+    redirect("/onboarding");
   }
 
   const trainDataResponse = await getUserTrainData();

@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 
 import { getWorkoutPlan } from "@/app/_lib/api/fetch-generated";
 import { authClient } from "@/app/_lib/auth-client";
+import { needsOnboarding } from "@/app/_lib/check-onboarding";
 import { AppLogo } from "@/app/_components/app-logo";
 import { BottomNav } from "@/app/_components/bottom-nav";
 
@@ -42,6 +43,10 @@ export default async function WorkoutPlanPage({ params }: PageProps) {
 
   if (!session.data?.user) {
     redirect("/auth");
+  }
+
+  if (await needsOnboarding()) {
+    redirect("/onboarding");
   }
 
   const response = await getWorkoutPlan(planId);

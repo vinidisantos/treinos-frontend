@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 
 import { getStats } from "@/app/_lib/api/fetch-generated";
 import { authClient } from "@/app/_lib/auth-client";
+import { needsOnboarding } from "@/app/_lib/check-onboarding";
 import { AppLogo } from "@/app/_components/app-logo";
 import { BottomNav } from "@/app/_components/bottom-nav";
 
@@ -88,6 +89,10 @@ export default async function StatsPage() {
 
   if (!session.data?.user) {
     redirect("/auth");
+  }
+
+  if (await needsOnboarding()) {
+    redirect("/onboarding");
   }
 
   const today = dayjs();

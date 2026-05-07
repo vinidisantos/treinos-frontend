@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 
 import { getHome } from "./_lib/api/fetch-generated";
 import { authClient } from "./_lib/auth-client";
+import { needsOnboarding } from "./_lib/check-onboarding";
 import { AppLogo } from "./_components/app-logo";
 import { BottomNav } from "./_components/bottom-nav";
 import { WorkoutDayCard } from "./_components/workout-day-card";
@@ -30,6 +31,10 @@ export default async function Home() {
 
   if (!session.data?.user) {
     redirect("/auth");
+  }
+
+  if (await needsOnboarding()) {
+    redirect("/onboarding");
   }
 
   const today = dayjs();
